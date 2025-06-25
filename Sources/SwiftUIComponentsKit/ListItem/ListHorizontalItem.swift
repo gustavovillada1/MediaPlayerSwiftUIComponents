@@ -118,11 +118,11 @@ public struct ListHorizontalItem: View {
         HStack(spacing: 16) {
             ForEach(0..<5) { i in
                 ListHorizontalItem(
-                    action: {},
                     imageURL: "https://e-cdns-images.dzcdn.net/images/artist/abc123456789/264x264-000000-80-0-0.jpg",
                     title: "Artist \(i + 1)",
                     subtitle: "Pop",
-                    style: i % 3 == 0 ? .large : i % 3 == 1 ? .medium : .compact
+                    style: (i % 3 == 0 ? .large : i % 3 == 1 ? .medium : .compact),
+                    action: {}
                 )
             }
         }
