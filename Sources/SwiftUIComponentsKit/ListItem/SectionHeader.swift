@@ -15,7 +15,7 @@ public struct SectionHeader: View {
     var titleColor: Color = Color.black
     var rightActionColor: Color = Color.blue
     
-    init(
+    public init(
         title: String
     ) {
         self.title = title
