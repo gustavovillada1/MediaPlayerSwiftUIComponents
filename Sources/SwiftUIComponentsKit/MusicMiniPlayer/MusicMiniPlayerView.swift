@@ -28,6 +28,8 @@ public struct MusicMiniPlayerView: View {
     private let onNextSong: () -> Void
     private let onPreviousSong: () -> Void
     private let isPlaying: Bool
+    private var colorScheme: ColorScheme = .dark
+    private var primaryColor: Color = Color.green
 
      /// Initializes a new `MusicMiniPlayerView`.
      ///
@@ -127,10 +129,11 @@ public struct MusicMiniPlayerView: View {
                 Text(title)
                     .font(.headline)
                     .lineLimit(1)
+                    .preferredColorScheme(colorScheme)
                 Text(subtitle)
                     .font(.subheadline)
-                    .foregroundColor(.gray)
                     .lineLimit(1)
+                    .preferredColorScheme(colorScheme)
             }
             Spacer()
             HStack(spacing: 15) {
@@ -138,14 +141,20 @@ public struct MusicMiniPlayerView: View {
                     Icons.backwardFill.image
                         .font(.title3)
                 }
+                .buttonStyle(.plain)
+
                 Button(action: onPlayPause) {
                     Image(systemName: isPlaying ? "pause.fill" : "play.fill")
                         .font(.title)
                 }
+                .buttonStyle(.plain)
+
                 Button(action: onNextSong) {
                     Icons.forwardFill.image
                         .font(.title3)
                 }
+                .buttonStyle(.plain)
+
             }
         }
         .padding()
@@ -195,25 +204,33 @@ public struct MusicMiniPlayerView: View {
                 .font(.title2)
                 .bold()
                 .lineLimit(1)
+                .preferredColorScheme(colorScheme)
             
             Text(subtitle)
                 .font(.title3)
                 .foregroundColor(.secondary)
                 .lineLimit(1)
+                .preferredColorScheme(colorScheme)
 
             HStack(spacing: 40) {
                 Button(action: onPreviousSong) {
                     Icons.backwardFill.image
                         .font(.title)
                 }
+                .buttonStyle(.plain)
+
                 Button(action: onPlayPause) {
                     Image(systemName: isPlaying ? "pause.circle.fill" : "play.circle.fill")
                         .font(.system(size: 50))
                 }
+                .buttonStyle(.plain)
+
                 Button(action: onNextSong) {
                     Icons.forwardFill.image
                         .font(.title)
                 }
+                .buttonStyle(.plain)
+
             }
 
             Button("Close") {
@@ -221,9 +238,18 @@ public struct MusicMiniPlayerView: View {
                     isExpanded = false
                 }
             }
+            .buttonStyle(.plain)
             .padding(.top)
         }
         .padding()
+    }
+    
+    
+    // MARK: Modifiers
+    public func setColorScheme(_ colorScheme: ColorScheme) -> MusicMiniPlayerView {
+        var copy: MusicMiniPlayerView = self
+        copy.colorScheme = colorScheme
+        return copy
     }
 }
 
@@ -262,6 +288,7 @@ private struct PreviewWrapper: View {
                     subtitle = "Previous title"
                 }
             )
+            .setColorScheme(.light)
         }
     }
 }

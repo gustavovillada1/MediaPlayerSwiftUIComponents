@@ -12,8 +12,7 @@ public struct SectionHeader: View {
     var iconName: String? = nil
     var subtitle: String? = nil
     var action: (() -> Void)? = nil
-    var titleColor: Color = Color.black
-    var rightActionColor: Color = Color.blue
+    var colorScheme: ColorScheme = .dark
     
     public init(
         title: String
@@ -23,7 +22,10 @@ public struct SectionHeader: View {
     
     public var body: some View {
         HStack {
-            Text(title).font(.title).bold()
+            Text(title)
+                .font(.title)
+                .bold()
+                .preferredColorScheme(colorScheme)
             Spacer()
             if let subtitleUnwrapped: String = subtitle {
                 HStack {
@@ -32,6 +34,7 @@ public struct SectionHeader: View {
                         systemImage: iconName!,
                         action: action!
                     )
+                    .preferredColorScheme(colorScheme)
                 }
             }
         }
@@ -47,6 +50,12 @@ public struct SectionHeader: View {
         copy.iconName = iconName
         copy.subtitle = subtitle
         copy.action = action
+        return copy
+    }
+    
+    public func setColorScheme(_ colorScheme: ColorScheme) -> SectionHeader {
+        var copy: SectionHeader = self
+        copy.colorScheme = colorScheme
         return copy
     }
 }
