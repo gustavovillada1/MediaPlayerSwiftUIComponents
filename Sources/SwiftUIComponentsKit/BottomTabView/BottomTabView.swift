@@ -42,6 +42,7 @@ public struct BottomTabView<Tab: BottomTabItemProtocol>: View {
 /// - Note: Typically used inside `BottomTabView`.
 public struct BottomTabBar<Tab: BottomTabItemProtocol>: View {
     @Binding var selectedTab: Tab
+    private let constants: UIConstants = UIConstants()
 
     public init(selectedTab: Binding<Tab>) {
         self._selectedTab = selectedTab
