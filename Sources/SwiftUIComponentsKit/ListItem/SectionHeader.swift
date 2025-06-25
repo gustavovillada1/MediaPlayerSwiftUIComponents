@@ -42,7 +42,7 @@ public struct SectionHeader: View {
     
     // MARK: Modifiers
     public func addRightAction(
-        iconName: String? = "arrow.right", 
+        iconName: String? = "chevron.right", 
         subtitle: String,
         action: @escaping () -> Void = {}
     ) -> SectionHeader {
