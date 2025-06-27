@@ -29,12 +29,14 @@ public struct ListHorizontalItem: View {
     let subtitle: String?
     let style: ListItemStyle
     let action: () -> Void
+    let isPlaying: Bool
 
     public init(
         imageURL: String?,
         title: String,
         subtitle: String? = nil,
         style: ListItemStyle,
+        isPlaying: Bool = false,
         action: @escaping () -> Void
     ) {
         self.imageURL = imageURL
@@ -42,39 +44,50 @@ public struct ListHorizontalItem: View {
         self.subtitle = subtitle
         self.style = style
         self.action = action
+        self.isPlaying = isPlaying
     }
+
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            AsyncImage(url: URL(string: imageURL ?? "")) { phase in
-                switch phase {
-                case .empty:
-                    Color.gray.opacity(0.2)
-                case .success(let image):
-                    image
-                        .resizable()
-                        .scaledToFill()
-                case .failure:
-                    Color.red.opacity(0.3)
-                @unknown default:
-                    EmptyView()
+            ZStack {
+                AsyncImage(url: URL(string: imageURL ?? "")) { phase in
+                    switch phase {
+                    case .empty:
+                        Color.gray.opacity(0.2)
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .scaledToFill()
+                    case .failure:
+                        Color.red.opacity(0.3)
+                    @unknown default:
+                        EmptyView()
+                    }
+                }
+                .frame(width: imageSize, height: imageSize)
+                .cornerRadius(cornerRadius)
+                .clipped()
+
+                if isPlaying {
+                    RoundedRectangle(cornerRadius: cornerRadius)
+                        .stroke(Color.green, lineWidth: 3)
+                        .frame(width: imageSize, height: imageSize)
+                        .animation(.easeInOut, value: isPlaying)
                 }
             }
-            .frame(width: imageSize, height: imageSize)
-            .cornerRadius(cornerRadius)
-            .clipped()
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
                     .font(titleFont)
                     .lineLimit(1)
-                    .preferredColorScheme(/*@START_MENU_TOKEN@*/.dark/*@END_MENU_TOKEN@*/)
+                    .preferredColorScheme(.dark)
                 if let subtitle = subtitle, style != .compact {
                     Text(subtitle)
                         .font(subtitleFont)
                         .foregroundColor(.secondary)
                         .lineLimit(1)
-                        .preferredColorScheme(/*@START_MENU_TOKEN@*/.dark/*@END_MENU_TOKEN@*/)
+                        .preferredColorScheme(.dark)
                 }
             }
             .frame(width: imageSize, alignment: .leading)
@@ -122,6 +135,7 @@ public struct ListHorizontalItem: View {
                     title: "Artist \(i + 1)",
                     subtitle: "Pop",
                     style: (i % 3 == 0 ? .large : i % 3 == 1 ? .medium : .compact),
+                    isPlaying: false,
                     action: {}
                 )
             }
