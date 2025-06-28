@@ -165,8 +165,39 @@ public struct MusicMiniPlayerView: View {
         }
     }
 
+    // MARK: Expanded View
     private var expandedView: some View {
         VStack(spacing: 16) {
+            closeButtonView
+            trackBasicInformationView
+            playerManagerButtonsView
+
+            Spacer()
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding()
+    }
+    
+    // MARK: Close button
+    private var closeButtonView: some View {
+        HStack {
+            Button {
+                withAnimation {
+                    isExpanded = false
+                }
+            } label: {
+                Image(systemName: "chevron.down")
+                    .font(.system(size: 20))
+            }
+            .buttonStyle(.plain)
+            .padding(.top)
+
+        }
+    }
+    
+    // MARK: Track basic information
+    private var trackBasicInformationView: some View {
+        VStack {
             if let unwrappedImage: Image = image {
                 unwrappedImage
                     .resizable()
@@ -211,39 +242,32 @@ public struct MusicMiniPlayerView: View {
                 .foregroundColor(.secondary)
                 .lineLimit(1)
                 .preferredColorScheme(colorScheme)
-
-            HStack(spacing: 40) {
-                Button(action: onPreviousSong) {
-                    Icons.backwardFill.image
-                        .font(.title)
-                }
-                .buttonStyle(.plain)
-
-                Button(action: onPlayPause) {
-                    Image(systemName: isPlaying ? "pause.circle.fill" : "play.circle.fill")
-                        .font(.system(size: 50))
-                }
-                .buttonStyle(.plain)
-
-                Button(action: onNextSong) {
-                    Icons.forwardFill.image
-                        .font(.title)
-                }
-                .buttonStyle(.plain)
-
-            }
-
-            Button("Close") {
-                withAnimation {
-                    isExpanded = false
-                }
-            }
-            .buttonStyle(.plain)
-            .padding(.top)
         }
-        .padding()
     }
     
+    // MARK: Player manager buttons
+    private var playerManagerButtonsView: some View {
+        HStack(spacing: 40) {
+            Button(action: onPreviousSong) {
+                Icons.backwardFill.image
+                    .font(.title)
+            }
+            .buttonStyle(.plain)
+
+            Button(action: onPlayPause) {
+                Image(systemName: isPlaying ? "pause.circle.fill" : "play.circle.fill")
+                    .font(.system(size: 50))
+            }
+            .buttonStyle(.plain)
+
+            Button(action: onNextSong) {
+                Icons.forwardFill.image
+                    .font(.title)
+            }
+            .buttonStyle(.plain)
+
+        }
+    }
     
     // MARK: Modifiers
     public func setColorScheme(_ colorScheme: ColorScheme) -> MusicMiniPlayerView {
