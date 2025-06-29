@@ -18,51 +18,64 @@ import Combine
 public struct MusicMiniPlayerView: View {
     private let constants: UIConstants = UIConstants()
     
+    /// Indicates whether the mini player is currently expanded or collapsed.
     @Binding var isExpanded: Bool
-    
+
+    /// Indicates whether auto-play is enabled, allowing infinite track playback.
+    private var isAutoPlayOn: Bool?
+
+    /// Indicates whether the current track should repeat when finished.
+    private var isRepeatTrackOn: Bool?
+
+    /// Indicates whether the current track is actively playing.
+    private var isPlaying: Bool?
+
+    /// The title text to be displayed in the mini player (usually the track title).
     private let title: String
+
+    /// The subtitle text to be displayed in the mini player (usually the artist or album).
     private let subtitle: String
+
+    /// A local image to display as the track's artwork.
     private let image: Image?
+
+    /// A remote image URL to load and display as the track's artwork.
     private let urlImage: String?
-    private let onPlayPause: () -> Void
-    private let onNextSong: () -> Void
-    private let onPreviousSong: () -> Void
-    private let isPlaying: Bool
+
+    /// The color scheme to be used in the mini player (e.g. dark or light mode).
     private var colorScheme: ColorScheme = .dark
+
+    /// Optional additional view content to display in the mini player (e.g. controls, lyrics).
     private var extraContent: AnyView?
+
+    /// An action triggered when the play/pause button is pressed.
+    private var onPlayPause: (() -> Void)?
+
+    /// An action triggered when the next track button is pressed.
+    private var onNextTrack: (() -> Void)?
+
+    /// An action triggered when the previous track button is pressed.
+    private var onPreviousTrack: (() -> Void)?
+
+    /// An action triggered when the auto-play toggle is pressed.
+    private var onAutoPlay: (() -> Void)?
+
+    /// An action triggered when the repeat toggle is pressed.
+    private var onRepeatTrack: (() -> Void)?
     
-    /// Initializes a new `MusicMiniPlayerView`.
-    ///
-    /// - Parameters:
-    ///   - isExpanded: A binding that controls whether the player is expanded or collapsed.
-    ///   - title: The title of the current song.
-    ///   - artist: The artist of the current song.
-    ///   - image: A local `Image` to display (optional). If provided, this will be used instead of `urlImage`.
-    ///   - urlImage: A remote URL string pointing to the artwork image (optional).
-    ///   - isPlaying: Boolean indicating if the music is currently playing.
-    ///   - onPlayPause: Action to perform when the play/pause button is tapped.
-    ///   - onNextSong: Action to perform when the next button is tapped.
-    ///   - onPreviousSong: Action to perform when the previous button is tapped.
+    
     public init(
         isExpanded: Binding<Bool>,
         title: String,
         artist: String,
         image: Image? = nil,
-        urlImage: String? = nil,
-        isPlaying: Bool,
-        onPlayPause: @escaping () -> Void,
-        onNextSong: @escaping () -> Void,
-        onPreviousSong: @escaping () -> Void
+        urlImage: String? = nil
     ) {
         self._isExpanded = isExpanded
         self.title = title
         self.subtitle = artist
         self.image = image
         self.urlImage = urlImage
-        self.onPlayPause = onPlayPause
-        self.onNextSong = onNextSong
-        self.onPreviousSong = onPreviousSong
-        self.isPlaying = isPlaying
     }
     
     public var body: some View {
@@ -142,24 +155,29 @@ public struct MusicMiniPlayerView: View {
             }
             Spacer()
             HStack(spacing: 15) {
-                Button(action: onPreviousSong) {
-                    Icons.backwardFill.image
-                        .font(.title3)
+                if let onPreviousSong: () -> Void = onPreviousTrack {
+                    Button(action: onPreviousSong) {
+                        Icons.backwardFill.image
+                            .font(.title3)
+                    }
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
                 
-                Button(action: onPlayPause) {
-                    Image(systemName: isPlaying ? "pause.fill" : "play.fill")
-                        .font(.title)
+                if let onPlayPause: () -> Void = onPlayPause {
+                    Button(action: onPlayPause) {
+                        Image(systemName: isPlaying ?? false ? "pause.fill" : "play.fill")
+                            .font(.title)
+                    }
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
                 
-                Button(action: onNextSong) {
-                    Icons.forwardFill.image
-                        .font(.title3)
+                if let onNextSong: () -> Void = onNextTrack {
+                    Button(action: onNextSong) {
+                        Icons.forwardFill.image
+                            .font(.title3)
+                    }
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
-                
             }
         }
         .padding()
@@ -258,25 +276,48 @@ public struct MusicMiniPlayerView: View {
     
     // MARK: Player manager buttons
     private var playerManagerButtonsView: some View {
-        HStack(spacing: 40) {
-            Button(action: onPreviousSong) {
-                Icons.backwardFill.image
-                    .font(.title)
+        HStack(spacing: 30) {
+            if let onRepeatTrack: () -> Void = onRepeatTrack {
+                Button(action: onRepeatTrack, label: {
+                    Image(systemName: "repeat.1")
+                        .font(.system(size: 20))
+                        .foregroundStyle((isRepeatTrackOn ?? false) ? Color.blue: Color.white)
+                })
             }
-            .buttonStyle(.plain)
-            
-            Button(action: onPlayPause) {
-                Image(systemName: isPlaying ? "pause.circle.fill" : "play.circle.fill")
-                    .font(.system(size: 50))
+
+            if let onPreviousTrack: () -> Void = onPreviousTrack {
+                Button(action: onPreviousTrack) {
+                    Icons.backwardFill.image
+                        .font(.title)
+                }
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
             
-            Button(action: onNextSong) {
-                Icons.forwardFill.image
-                    .font(.title)
+            if let onPlayPause: () -> Void = onPlayPause {
+                Button(action: onPlayPause) {
+                    Image(systemName: isPlaying ?? false ? "pause.circle.fill" : "play.circle.fill")
+                        .font(.system(size: 50))
+                }
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
             
+            if let onNextTrack: () -> Void = onNextTrack {
+                Button(action: onNextTrack) {
+                    Icons.forwardFill.image
+                        .font(.title)
+                }
+                .buttonStyle(.plain)
+            }
+            
+            if let onAutoPlay: () -> Void = onAutoPlay {
+                Button(
+                    action: onAutoPlay,
+                    label: {
+                        Image(systemName: "infinity")
+                            .font(.system(size: 20))
+                            .foregroundStyle((isAutoPlayOn ?? false) ? Color.blue: Color.white)
+                    })
+            }
         }
     }
     
@@ -292,6 +333,40 @@ public struct MusicMiniPlayerView: View {
         copy.extraContent = AnyView(view())
         return copy
     }
+    
+    public func onPlayPause(isPlaying: Bool, _ didTapOnPlayPause: @escaping () -> Void) -> MusicMiniPlayerView {
+        var copy = self
+        copy.isPlaying = isPlaying
+        copy.onPlayPause = didTapOnPlayPause
+        return copy
+    }
+    
+    public func onNextTrack(_ didTapOnNextTrack: @escaping () -> Void) -> MusicMiniPlayerView {
+        var copy = self
+        copy.onNextTrack = didTapOnNextTrack
+        return copy
+    }
+    
+    public func onPreviousTrack(_ didTapOnPreviousTrack: @escaping () -> Void) -> MusicMiniPlayerView {
+        var copy = self
+        copy.onPreviousTrack = didTapOnPreviousTrack
+        return copy
+    }
+    
+    public func onRepeatTrack(isRepeatTrackOn: Bool, _ didTapOnRepeatTrack: @escaping () -> Void) -> MusicMiniPlayerView {
+        var copy = self
+        copy.isRepeatTrackOn = isRepeatTrackOn
+        copy.onRepeatTrack = didTapOnRepeatTrack
+        return copy
+    }
+    
+    public func onAutoPlay(isAutoPlayOn: Bool, _ didTapOnAutoPlay: @escaping () -> Void) -> MusicMiniPlayerView {
+        var copy = self
+        copy.isAutoPlayOn = isAutoPlayOn
+        copy.onAutoPlay = didTapOnAutoPlay
+        return copy
+    }
+
 }
 
 #Preview {
@@ -301,6 +376,8 @@ public struct MusicMiniPlayerView: View {
 private struct PreviewWrapper: View {
     @State var isExpanded: Bool = false
     @State var isPlaying: Bool = false
+    @State var shouldRepeatTrack: Bool = false
+    @State var isAutoPlayOn: Bool = false
     @State var title: String = "Title"
     @State var subtitle: String = "Song.artist.name"
 
@@ -315,21 +392,26 @@ private struct PreviewWrapper: View {
                 isExpanded: $isExpanded,
                 title: title,
                 artist: subtitle,
-                urlImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRC-uuewOTStCbsa8t4S5nUbBX3wf9sf6LfzA&s",
-                isPlaying: isPlaying,
-                onPlayPause: {
-                    isPlaying.toggle()
-                },
-                onNextSong: {
-                    title = "Next title"
-                    subtitle = "Next title"
-                },
-                onPreviousSong: {
-                    title = "Previous title"
-                    subtitle = "Previous title"
-                }
+                urlImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRC-uuewOTStCbsa8t4S5nUbBX3wf9sf6LfzA&s"
             )
             .setColorScheme(.dark)
+            .onPlayPause(isPlaying: isPlaying) {
+                isPlaying.toggle()
+            }
+            .onNextTrack {
+                title = "Next track Title"
+                subtitle = "NextTrack Subtitle"
+            }
+            .onPreviousTrack {
+                title = "Previous track Title"
+                subtitle = "Previous Subtitle"
+            }
+            .onRepeatTrack(isRepeatTrackOn: shouldRepeatTrack) {
+                shouldRepeatTrack.toggle()
+            }
+            .onAutoPlay(isAutoPlayOn: isAutoPlayOn) { 
+                isAutoPlayOn.toggle()
+            }
         }
     }
 }
