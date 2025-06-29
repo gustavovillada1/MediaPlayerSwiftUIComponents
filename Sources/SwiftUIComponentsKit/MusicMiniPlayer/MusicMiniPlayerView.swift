@@ -29,20 +29,20 @@ public struct MusicMiniPlayerView: View {
     private let onPreviousSong: () -> Void
     private let isPlaying: Bool
     private var colorScheme: ColorScheme = .dark
-    private var primaryColor: Color = Color.green
-
-     /// Initializes a new `MusicMiniPlayerView`.
-     ///
-     /// - Parameters:
-     ///   - isExpanded: A binding that controls whether the player is expanded or collapsed.
-     ///   - title: The title of the current song.
-     ///   - artist: The artist of the current song.
-     ///   - image: A local `Image` to display (optional). If provided, this will be used instead of `urlImage`.
-     ///   - urlImage: A remote URL string pointing to the artwork image (optional).
-     ///   - isPlaying: Boolean indicating if the music is currently playing.
-     ///   - onPlayPause: Action to perform when the play/pause button is tapped.
-     ///   - onNextSong: Action to perform when the next button is tapped.
-     ///   - onPreviousSong: Action to perform when the previous button is tapped.
+    private var extraContent: AnyView?
+    
+    /// Initializes a new `MusicMiniPlayerView`.
+    ///
+    /// - Parameters:
+    ///   - isExpanded: A binding that controls whether the player is expanded or collapsed.
+    ///   - title: The title of the current song.
+    ///   - artist: The artist of the current song.
+    ///   - image: A local `Image` to display (optional). If provided, this will be used instead of `urlImage`.
+    ///   - urlImage: A remote URL string pointing to the artwork image (optional).
+    ///   - isPlaying: Boolean indicating if the music is currently playing.
+    ///   - onPlayPause: Action to perform when the play/pause button is tapped.
+    ///   - onNextSong: Action to perform when the next button is tapped.
+    ///   - onPreviousSong: Action to perform when the previous button is tapped.
     public init(
         isExpanded: Binding<Bool>,
         title: String,
@@ -86,7 +86,7 @@ public struct MusicMiniPlayerView: View {
         .padding(.horizontal)
         .animation(.easeInOut, value: isExpanded)
     }
-
+    
     private var collapsedView: some View {
         HStack {
             if let unwrappedImage: Image = image {
@@ -142,19 +142,19 @@ public struct MusicMiniPlayerView: View {
                         .font(.title3)
                 }
                 .buttonStyle(.plain)
-
+                
                 Button(action: onPlayPause) {
                     Image(systemName: isPlaying ? "pause.fill" : "play.fill")
                         .font(.title)
                 }
                 .buttonStyle(.plain)
-
+                
                 Button(action: onNextSong) {
                     Icons.forwardFill.image
                         .font(.title3)
                 }
                 .buttonStyle(.plain)
-
+                
             }
         }
         .padding()
@@ -164,17 +164,23 @@ public struct MusicMiniPlayerView: View {
             }
         }
     }
-
+    
     // MARK: Expanded View
     private var expandedView: some View {
         VStack(spacing: 16) {
             closeButtonView
-            trackBasicInformationView
-            playerManagerButtonsView
-
-            Spacer()
+            if let unwrappedExtraContent: AnyView = extraContent {
+                ScrollView(showsIndicators: false) {
+                    trackBasicInformationView
+                    playerManagerButtonsView
+                    unwrappedExtraContent
+                }
+            } else {
+                trackBasicInformationView
+                playerManagerButtonsView
+            }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .frame(maxWidth: .infinity)
         .padding()
     }
     
@@ -191,7 +197,7 @@ public struct MusicMiniPlayerView: View {
             }
             .buttonStyle(.plain)
             .padding(.top)
-
+            
         }
     }
     
@@ -213,23 +219,23 @@ public struct MusicMiniPlayerView: View {
                     case .empty:
                         Icons.backwardFill.image
                             .resizable()
-                            .scaledToFit()
+                            .aspectRatio(1, contentMode: .fill)
                     case .success(let image):
                         image
                             .resizable()
-                            .scaledToFit()
+                            .aspectRatio(1, contentMode: .fill)
                     case .failure:
                         Icons.pauseFill.image
                             .resizable()
-                            .scaledToFit()
+                            .aspectRatio(1, contentMode: .fill)
                     @unknown default:
                         EmptyView()
                     }
                 }
-                .frame(height: 200)
+                .frame(width: 300, height: 300)
                 .cornerRadius(12)
             }
-
+            
             
             Text(title)
                 .font(.title2)
@@ -253,19 +259,19 @@ public struct MusicMiniPlayerView: View {
                     .font(.title)
             }
             .buttonStyle(.plain)
-
+            
             Button(action: onPlayPause) {
                 Image(systemName: isPlaying ? "pause.circle.fill" : "play.circle.fill")
                     .font(.system(size: 50))
             }
             .buttonStyle(.plain)
-
+            
             Button(action: onNextSong) {
                 Icons.forwardFill.image
                     .font(.title)
             }
             .buttonStyle(.plain)
-
+            
         }
     }
     
@@ -273,6 +279,12 @@ public struct MusicMiniPlayerView: View {
     public func setColorScheme(_ colorScheme: ColorScheme) -> MusicMiniPlayerView {
         var copy: MusicMiniPlayerView = self
         copy.colorScheme = colorScheme
+        return copy
+    }
+    
+    public func addExtraContentView<Content: View>(@ViewBuilder _ view: () -> Content) -> MusicMiniPlayerView {
+        var copy = self
+        copy.extraContent = AnyView(view())
         return copy
     }
 }
@@ -289,11 +301,11 @@ private struct PreviewWrapper: View {
 
     var body: some View {
         ZStack {
-             HStack(spacing: 0) {
-                 Color.blue
-                 Color.red
-             }
-             .ignoresSafeArea()
+            HStack(spacing: 0) {
+                Color.blue
+                Color.red
+            }
+            .ignoresSafeArea()
             MusicMiniPlayerView(
                 isExpanded: $isExpanded,
                 title: title,
@@ -312,7 +324,7 @@ private struct PreviewWrapper: View {
                     subtitle = "Previous title"
                 }
             )
-            .setColorScheme(.light)
+            .setColorScheme(.dark)
         }
     }
 }
