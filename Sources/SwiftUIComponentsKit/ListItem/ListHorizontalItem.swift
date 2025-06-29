@@ -70,8 +70,10 @@ public struct ListHorizontalItem: View {
                 .clipped()
 
                 if isPlaying {
+                    Color.black.opacity(0.3)
+                    MusicBarsView()
                     RoundedRectangle(cornerRadius: cornerRadius)
-                        .stroke(Color.green, lineWidth: 3)
+                        .stroke(Color.white, lineWidth: 3)
                         .frame(width: imageSize, height: imageSize)
                         .animation(.easeInOut, value: isPlaying)
                 }
@@ -135,7 +137,7 @@ public struct ListHorizontalItem: View {
                     title: "Artist \(i + 1)",
                     subtitle: "Pop",
                     style: (i % 3 == 0 ? .large : i % 3 == 1 ? .medium : .compact),
-                    isPlaying: false,
+                    isPlaying: i % 2 == 0,
                     action: {}
                 )
             }
