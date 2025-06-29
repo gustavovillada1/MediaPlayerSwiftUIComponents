@@ -66,25 +66,30 @@ public struct MusicMiniPlayerView: View {
     }
     
     public var body: some View {
-        VStack(spacing: Double.zero) {
-            if !isExpanded {
-                collapsedView
-            } else {
-                expandedView
+        ZStack {
+            if isExpanded {
+                Color.black.opacity(0.4)
             }
+            VStack(spacing: Double.zero) {
+                if !isExpanded {
+                    collapsedView
+                } else {
+                    expandedView
+                }
+            }
+            .background(
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(.thinMaterial)
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 20))
+            .overlay(
+                RoundedRectangle(cornerRadius: 20)
+                    .stroke(Color.white.opacity(0.1), lineWidth: 1)
+            )
+            .shadow(radius: 5)
+            .padding(.horizontal)
+            .animation(.easeInOut, value: isExpanded)
         }
-        .background(
-            RoundedRectangle(cornerRadius: 20)
-                .fill(.thinMaterial)
-        )
-        .clipShape(RoundedRectangle(cornerRadius: 20))
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .stroke(Color.white.opacity(0.1), lineWidth: 1)
-        )
-        .shadow(radius: 5)
-        .padding(.horizontal)
-        .animation(.easeInOut, value: isExpanded)
     }
     
     private var collapsedView: some View {
