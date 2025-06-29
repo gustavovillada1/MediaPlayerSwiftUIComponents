@@ -190,7 +190,7 @@ public struct MusicMiniPlayerView: View {
     
     // MARK: Expanded View
     private var expandedView: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 20) {
             closeButtonView
             if let unwrappedExtraContent: AnyView = extraContent {
                 ScrollView(showsIndicators: false) {
@@ -226,7 +226,7 @@ public struct MusicMiniPlayerView: View {
     
     // MARK: Track basic information
     private var trackBasicInformationView: some View {
-        VStack {
+        VStack(spacing: 15) {
             if let unwrappedImage: Image = image {
                 unwrappedImage
                     .resizable()
