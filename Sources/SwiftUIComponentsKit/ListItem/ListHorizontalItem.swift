@@ -72,12 +72,12 @@ public struct ListHorizontalItem: View {
                 .cornerRadius(cornerRadius)
                 .clipped()
 
-                if isFocused {
+                if isPlaying {
                     Color.black.opacity(0.3)
                     MusicBarsView()
                 }
                 
-                if isPlaying {
+                if isFocused {
                     RoundedRectangle(cornerRadius: cornerRadius)
                         .stroke(Color.white, lineWidth: 3)
                         .frame(width: imageSize, height: imageSize)
