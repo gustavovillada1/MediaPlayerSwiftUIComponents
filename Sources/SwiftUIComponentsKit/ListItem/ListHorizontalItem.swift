@@ -30,6 +30,7 @@ public struct ListHorizontalItem: View {
     let style: ListItemStyle
     let action: () -> Void
     let isPlaying: Bool
+    let isFocused: Bool
 
     public init(
         imageURL: String?,
@@ -37,6 +38,7 @@ public struct ListHorizontalItem: View {
         subtitle: String? = nil,
         style: ListItemStyle,
         isPlaying: Bool = false,
+        isFocused: Bool = false,
         action: @escaping () -> Void
     ) {
         self.imageURL = imageURL
@@ -45,6 +47,7 @@ public struct ListHorizontalItem: View {
         self.style = style
         self.action = action
         self.isPlaying = isPlaying
+        self.isFocused = isFocused
     }
 
 
@@ -69,9 +72,12 @@ public struct ListHorizontalItem: View {
                 .cornerRadius(cornerRadius)
                 .clipped()
 
-                if isPlaying {
+                if isFocused {
                     Color.black.opacity(0.3)
                     MusicBarsView()
+                }
+                
+                if isPlaying {
                     RoundedRectangle(cornerRadius: cornerRadius)
                         .stroke(Color.white, lineWidth: 3)
                         .frame(width: imageSize, height: imageSize)
@@ -137,7 +143,8 @@ public struct ListHorizontalItem: View {
                     title: "Artist \(i + 1)",
                     subtitle: "Pop",
                     style: (i % 3 == 0 ? .large : i % 3 == 1 ? .medium : .compact),
-                    isPlaying: i % 2 == 0,
+                    isPlaying: true,
+                    isFocused: true,
                     action: {}
                 )
             }
