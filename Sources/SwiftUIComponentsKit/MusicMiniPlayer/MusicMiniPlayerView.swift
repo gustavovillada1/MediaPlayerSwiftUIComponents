@@ -255,7 +255,7 @@ public struct MusicMiniPlayerView: View {
                         EmptyView()
                     }
                 }
-                .frame(width: 300, height: 300)
+                .frame(width: 350, height: 350)
                 .cornerRadius(12)
             }
             
