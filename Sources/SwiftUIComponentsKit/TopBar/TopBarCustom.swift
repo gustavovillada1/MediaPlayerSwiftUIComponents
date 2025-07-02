@@ -8,13 +8,13 @@
 import Foundation
 import SwiftUI
 
-struct TopBarCustom: View {
+public struct TopBarCustom: View {
     let title: String
     var onBack: (() -> Void)? = nil
     var trailingIcon: Image? = Icons.search.image
     var trailingAction: (() -> Void)? = nil
     
-    var body: some View {
+    public var body: some View {
         HStack {
             if let onBack: () -> Void = onBack {
                 Button(action: {
