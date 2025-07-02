@@ -14,6 +14,18 @@ public struct TopBarCustom: View {
     var trailingIcon: Image? = Icons.search.image
     var trailingAction: (() -> Void)? = nil
     
+    public init(
+        title: String,
+        onBack: (() -> Void)? = nil,
+        trailingIcon: Image? = nil,
+        trailingAction: (() -> Void)? = nil
+    ) {
+        self.title = title
+        self.onBack = onBack
+        self.trailingIcon = trailingIcon
+        self.trailingAction = trailingAction
+    }
+    
     public var body: some View {
         HStack {
             if let onBack: () -> Void = onBack {
