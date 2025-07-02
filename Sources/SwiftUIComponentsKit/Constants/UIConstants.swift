@@ -13,4 +13,8 @@ struct UIConstants {
     var musicMiniPlayerCollapsedImageSize: CGFloat { 45 }
     var musicMiniPlayerCollapsedImageCornerRadius: CGFloat { 6 }
     
+    // MARK: Top Bar
+    var topBarHeight: CGFloat { 44.0 }
+    var trailingIconPadding: CGFloat { 10 }
+    
 }

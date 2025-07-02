@@ -13,7 +13,11 @@ public enum Icons: String, CaseIterable {
     case pauseFill = "pause.circle.fill"
     case forwardFill = "forward.fill"
     case backwardFill = "backward.fill"
-
+    case search = "magnifyingglass"
+    case chevronRigth = "chevron.right"
+    case chevronLeft = "chevron.left"
+    case personCropCircle = "person.crop.circle"
+    
     public var image: Image {
         Image(systemName: self.rawValue)
     }
